@@ -3,30 +3,30 @@ using System.Globalization;
 
 namespace Calendar
 {
-    class Program
+    internal static class Calendar
     {
-        static void Main(string[] args)
+        private static void Main()
         {
             Console.WriteLine("Enter date, please:");
-            string readDateAsString = Console.ReadLine();
-            if (DateTime.TryParse(readDateAsString, out DateTime valueDate))
+            var readDateAsString = Console.ReadLine();
+            if (DateTime.TryParse(readDateAsString, out var valueDate))
             {
-                PrintCalendarForMonth(valueDate);
+                _inputDate = valueDate;
+                PrintCalendarForMonth();
             }
             else
             {
-                Console.WriteLine("{0} is incorrect format date", readDateAsString);
+                Console.WriteLine($"{readDateAsString} is incorrect format date");
             }
-            Console.ReadKey();
         }
 
-        private static void PrintCalendarForMonth(DateTime valueDate)
+        private static void PrintCalendarForMonth()
         {
             Console.ForegroundColor = ConsoleColor.White;
             PrintDaysOfWeek();
-            PrintStartIndent(valueDate);
-            int numberOfWorkingDays = 0;
-            for (DateTime currentDate = new DateTime(valueDate.Year, valueDate.Month, 1); currentDate.Month == valueDate.Month; currentDate = currentDate.AddDays(1))
+            PrintStartIndent();
+            var numberOfWorkingDays = 0;
+            for (var currentDate = new DateTime(_inputDate.Year, _inputDate.Month, 1); currentDate.Month == _inputDate.Month; currentDate = currentDate.AddDays(1))
             {
                 if (currentDate.DayOfWeek == DayOfWeek.Saturday || currentDate.DayOfWeek == DayOfWeek.Sunday)
                 {
@@ -40,12 +40,8 @@ namespace Calendar
                 {
                     Console.ForegroundColor = ConsoleColor.Green;
                 }
-                if (currentDate.Day == valueDate.Day)
-                {
-                    Console.ForegroundColor = ConsoleColor.DarkMagenta;
-                }
-
-                Console.Write("{0}\t", currentDate.Day);
+ 
+                Console.Write($"{currentDate.Day}\t");
 
                 if (currentDate.DayOfWeek == DayOfWeek.Sunday)
                 {
@@ -53,17 +49,17 @@ namespace Calendar
                 }
                 Console.ForegroundColor = ConsoleColor.White;
             }
-            Console.WriteLine();
+            Console.WriteLine($"\nNumber of working days: {numberOfWorkingDays}");
         }
-        private static void PrintStartIndent(DateTime valueDate)
+        private static void PrintStartIndent()
         {
-            int firstDay = (int)new DateTime(valueDate.Year, valueDate.Month, 1).DayOfWeek;
+            var firstDay = (int)new DateTime(_inputDate.Year, _inputDate.Month, 1).DayOfWeek;
             if ((int)DayOfWeek.Sunday == firstDay)
             {
                 firstDay = 7;
             }
             firstDay--;
-            for (int i = 0; i < firstDay; i++)
+            for (var i = 0; i < firstDay; i++)
             {
                 Console.Write("\t");
             }
@@ -73,14 +69,16 @@ namespace Calendar
         private static void PrintDaysOfWeek()
         {
             Console.WriteLine();
-            string[] daysOfWeek = DateTimeFormatInfo.CurrentInfo.AbbreviatedDayNames;  
-            for ( int i = 1; i < 7; i++)
+            Console.ForegroundColor = ConsoleColor.Blue;
+            var daysOfWeek = DateTimeFormatInfo.CurrentInfo.AbbreviatedDayNames;  
+            for ( var i = 1; i < 7; i++)
             {
                 Console.Write($"{daysOfWeek[i]}\t");
             }
             Console.Write($"{daysOfWeek[0]}\n");
+            Console.ForegroundColor = ConsoleColor.White;
         }
-                
-        
+
+        private static DateTime _inputDate;
     }
 }
