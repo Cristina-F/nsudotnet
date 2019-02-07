@@ -20,8 +20,13 @@ namespace GuessingGame
             _startTime = DateTime.Now;
             while (!isCorrectAnswer)
             {
-                
-                var userNumber = ReadUserNumber();
+                var userAnswer = Console.ReadLine();
+                if (userAnswer != null && userAnswer.Equals(ExitCode))
+                {
+                    Console.WriteLine("I apologize and finish.");
+                    return;
+                }
+                var userNumber = GetUserNumber(userAnswer);
                 isCorrectAnswer = IsCorrectAnswer(userNumber);
                 if (!isCorrectAnswer)
                 {
@@ -71,15 +76,10 @@ namespace GuessingGame
             var time = _endTime - _startTime;   
             Console.WriteLine($"Play time:  {time.Minutes}:{time.Seconds}");
         }
-        private int ReadUserNumber()
+        
+        private int GetUserNumber(string userAnswer)
         {
-            var userAnswer = Console.ReadLine();
             var userNumber = 0;
-            if (userAnswer != null && userAnswer.Equals(ExitCode))
-            {
-                Console.WriteLine("I apologize and finish.");
-                Environment.Exit(0);
-            }
             try
             {
                 userNumber = int.Parse(userAnswer);
@@ -88,9 +88,8 @@ namespace GuessingGame
             catch
             {
                 Console.WriteLine($"{_userName}, you entered nonsense.....");
-                ReadUserNumber();
+                GetUserNumber(Console.ReadLine());
             }
-
             return userNumber;
         }
         
