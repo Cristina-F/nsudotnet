@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
+using static System.String;
 
 namespace LineCounting
 {
@@ -24,37 +24,55 @@ namespace LineCounting
             return files.Sum(CountLinesInFile);
         }
 
-        private static int CountLinesInFile(string file)
+        private int CountLinesInFile(string file)
         {
             var result = 0;
             using (var fileReader = new StreamReader(file))
             {
-                var isInComment = false;
                 while (!fileReader.EndOfStream)
                 {
                     var line = fileReader.ReadLine();
                     if (line == null) continue;
-                    if (isInComment)
-                    {
-                        if (!EndMultilineCommentRegex.IsMatch(line)) continue;
-                        line = EndMultilineCommentRegex.Replace(line, "");    
-                        isInComment = false;
-                    }
-                    else if (SingleLineCommentRegex.IsMatch(line)) continue;
-                    else if(MultilineCommentRegex.IsMatch(line))
-                    {
-                        line = MultilineCommentRegex.Replace(line, "");
-                    }
-                    else if(StartMultilineCommentRegex.IsMatch(line))
-                    {
-                        isInComment = true;
-                        line = StartMultilineCommentRegex.Replace(line, "");
-                    }
-                    if (!SpacesRegex.IsMatch(line)) result++; 
+                    line = DeleteComments(line);
+                    if (!IsNullOrEmpty(line)) result++; 
                 }
             }
            return result;
         }
+
+        private string DeleteComments(string line)
+        {
+            line = line.Trim();  
+            if (_isInComment)
+            {
+                if (!line.Contains(MultiLineCloseComment)) return null;
+                line = line.Remove(0,
+                    line.IndexOf(MultiLineCloseComment, StringComparison.Ordinal) + MultiLineCloseComment.Length);
+                _isInComment = false;
+                return DeleteComments(line);
+            }
+
+            if (line.StartsWith(SingleLineComment) || 
+                (line.StartsWith(MultiLineOpenComment) && line.EndsWith(MultiLineCloseComment))) return null;
+            if(line.Contains(MultiLineOpenComment) )
+            {
+                if (!line.Contains(MultiLineCloseComment))
+                {
+                    _isInComment = true;
+                    var index = line.IndexOf(MultiLineOpenComment, StringComparison.Ordinal);
+                    line = line.Remove(index, line.Length - index );   
+                }
+                else
+                {
+                    var index = line.IndexOf(MultiLineOpenComment, StringComparison.Ordinal);
+                    line = line.Remove(index, 
+                        line.IndexOf(MultiLineCloseComment, StringComparison.Ordinal) + MultiLineCloseComment.Length - index);
+                    return DeleteComments(line);
+                }  
+            }
+            return line;
+        }
+
         private CountLines(string extension)
         {
             _extension = extension;
@@ -63,11 +81,10 @@ namespace LineCounting
         
         private readonly string _extension;
         private readonly string _directory;
-        
-        private static readonly Regex SingleLineCommentRegex = new Regex("//.*$", RegexOptions.Compiled);     
-        private static readonly Regex MultilineCommentRegex = new Regex("^.*/\\*.*\\*/.*$", RegexOptions.Compiled);     
-        private static readonly Regex SpacesRegex = new Regex("^\\s*$", RegexOptions.Compiled);
-        private static readonly Regex EndMultilineCommentRegex = new Regex("^.*\\*/", RegexOptions.Compiled);                      
-        private static readonly Regex StartMultilineCommentRegex = new Regex("/\\*.*$", RegexOptions.Compiled);                     
+        private bool _isInComment;
+
+        private const string SingleLineComment = "//";
+        private const string MultiLineOpenComment = "/*";
+        private const string MultiLineCloseComment = "*/";
     }
 }
