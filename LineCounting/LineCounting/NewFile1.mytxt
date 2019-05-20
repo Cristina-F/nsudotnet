@@ -1,0 +1,29 @@
+private static string DeleteComments(string line)
+        { 
+        
+        
+        
+        
+        
+        
+        
+        
+           // line = line.Trim();
+            if //(_isInComment)
+            /*{*/
+                /*if (!line.Contains(MultiLineCloseComment)) return null;
+                line = line.Remove*/ //(0,
+                    /*line.IndexOf(MultiLineCloseComment, */ //StringComparison.Ordinal) + MultiLineCloseComment.Length);
+                _isInComment = false;
+                DeleteComments(line);
+            }
+            else /* (line.StartsWith(SingleLineComment)*/ /* || */
+                     (line.StartsWith(MultiLineOpenComment) && line.EndsWith(MultiLineCloseComment))) return null;
+            else if(line.Contains(MultiLineOpenComment) && !line.Contains(MultiLineCloseComment))
+            {
+                _isInComment = true;
+                var index = line.IndexOf(MultiLineOpenComment, StringComparison.Ordinal);
+                line = line.Remove(index, line.Length - index );  
+            }
+            return line;
+        }
