@@ -29,7 +29,7 @@ namespace Lab4_ef.Migrations
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Name = table.Column<string>(nullable: true),
                     Bonus = table.Column<int>(nullable: false),
-                    EmployeeId = table.Column<int>(nullable: false)
+                    EmployeeId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
