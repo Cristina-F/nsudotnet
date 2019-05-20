@@ -1,0 +1,64 @@
+﻿@model Lab4_ef.Models.Employee
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Employee</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.FirstName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.FirstName)
+        </dd> 
+        <dt>
+            @Html.DisplayNameFor(model => model.LastName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.LastName)
+        </dd>
+            
+    </dl>
+    <h4>Projects</h4>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Имя
+                </th>
+                <th>
+                    Премия
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Projects)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                        
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Bonus)
+                    </td>
+                    <td>
+                        <a asp-action="EditProject" asp-route-id="@item.ProjectId">Edit</a> |
+                        <a asp-action="DeleteProject" asp-route-id="@item.ProjectId" >Delete</a>
+                    </td>
+                   
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.EmployeeId">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
