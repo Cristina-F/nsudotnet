@@ -21,6 +21,7 @@ namespace WebLab4_ef.Controllers {
                 .Select(e => new EmployeeView {
                     FirstName = e.FirstName,
                     LastName = e.LastName,
+                    City = e.City,
                     Sum = e.Projects.Sum(p => p.Bonus),
                     EmployeeId = e.EmployeeId,
                 })
@@ -52,7 +53,7 @@ namespace WebLab4_ef.Controllers {
 // POST: Employees/Create 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("EmployeeId,FirstName,LastName")]
+        public async Task<IActionResult> Create([Bind("EmployeeId,FirstName,LastName,City")]
             Employee employee) {
             if (ModelState.IsValid) {
                 _context.Add(employee);
@@ -130,7 +131,7 @@ namespace WebLab4_ef.Controllers {
 // POST: Employees/Edit/5 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("EmployeeId,FirstName,LastName")]
+        public async Task<IActionResult> Edit(int id, [Bind("EmployeeId,FirstName,LastName,City")]
             Employee employee) {
             if (id != employee.EmployeeId) {
                 return NotFound();
